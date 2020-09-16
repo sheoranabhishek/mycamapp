@@ -24,16 +24,21 @@ app.get('/:room' , (req , res)=>{
     res.render('room' , {roomID: req.params.room});
 })
 
-io.on('connection' , socket => {
-    //now the user will join the room 
-    socket.on('join-room' , (roomId , userId)=> {
-        socket.join(roomId);
-        socket.to(roomId).broadcast.emit('user-connected' , userId);
-        console.log("Hey we have joined the room ");
+io.on('connection', socket => {
+    socket.on('join-room', (roomId, userId) => {
+      socket.join(roomId)
+      socket.to(roomId).broadcast.emit('user-connected', userId);
+      // messages
+      socket.on('message', (message) => {
+        //send message to the same room
+        io.to(roomId).emit('createMessage', message)
+    }); 
+  
+      socket.on('disconnect', () => {
+        socket.to(roomId).broadcast.emit('user-disconnected', userId)
+      })
     })
-
-    //now getting the room id..
-})
+  })
 
 
 
