@@ -2,10 +2,10 @@
 const socket = io('/');
 
 const videoGrid = document.getElementById("video-grid");
-var peer = new Peer( undefined , {
-    key:'peerjs',
+
+const peer = new Peer( undefined , {
     path: '/peerjs' , 
-    host: 'localhost',
+    host: '/',
     port: '3000'
 }); 
 
@@ -20,6 +20,7 @@ navigator.mediaDevices.getUserMedia({
     addVideoStream(myVideo , stream );
     
     peer.on('call' , call => {
+        console.log("Here2!" )
         call.answer(stream);
         const video = document.createElement('video');
         call.on('stream' , userVideoStream =>{
@@ -45,6 +46,7 @@ navigator.mediaDevices.getUserMedia({
 
 const connectToNewUser = (userId , stream) => {
     //calling the other user 
+    console.log("User id : " , userId , " Joined !");
     const call = peer.call(userId , stream);
     const video = document.createElement('video');
     call.on ('stream' , userVideoStream => {
